@@ -6,27 +6,38 @@ from sqlalchemy import create_engine
 from eralchemy2 import render_er
 
 Base = declarative_base()
-
-class Person(Base):
-    __tablename__ = 'person'
-    # Here we define columns for the table person
-    # Notice that each column is also a normal Python instance attribute.
+    
+class Planets(Base):
+    __tablename__ = 'planets'
     id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
+    name = Column(String(50))
+    rotation_period = Column(Integer)
 
-class Address(Base):
-    __tablename__ = 'address'
-    # Here we define columns for the table address.
-    # Notice that each column is also a normal Python instance attribute.
+class Characters(Base):
+    __tablename__ = 'characters'
     id = Column(Integer, primary_key=True)
-    street_name = Column(String(250))
-    street_number = Column(String(250))
-    post_code = Column(String(250), nullable=False)
-    person_id = Column(Integer, ForeignKey('person.id'))
-    person = relationship(Person)
+    name = Column(String(50), unique=True)
+    mass = Column(Integer)
+    homeworld = Column(Integer, ForeignKey('planets.id'))
+    homeworld_relationship = relationship(Planets)
 
-    def to_dict(self):
-        return {}
+class Vehicles(Base):
+    __tablename__ = 'vehicles'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), unique=True)
+    model = Column(String(50))
+    pilots = Column(Integer, ForeignKey('characters.id'))
+    pilots_relationship = relationship(Characters)
 
+class Favorites(Base):
+    __tablename__ = 'favorites'
+    id = Column(Integer, primary_key=True)
+    character_id = Column(Integer, ForeignKey('character.id'))
+    planet_id = Column(Integer, ForeignKey('planets.id'))
+    vehicle_id = Column(Integer, ForeignKey('vehicles.id'))
+
+def to_dict(self):
+    return {}
+    
 ## Draw from SQLAlchemy base
 render_er(Base, 'diagram.png')
